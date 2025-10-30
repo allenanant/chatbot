@@ -232,6 +232,61 @@
             color: var(--text-secondary); font-size: 1rem;
         }
         .loading-spinner.show { display: block; }
+
+        /* --- Traffic Calculator Styles --- */
+        #traffic-tool-container { display: none; flex-direction: column; flex-grow: 1; padding: 2rem; overflow-y: auto; }
+        #traffic-tool-container.active { display: flex; }
+        .traffic-header { text-align: center; margin-bottom: 2rem; }
+        .traffic-header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .traffic-header p { color: var(--text-secondary); font-size: 1rem; max-width: 600px; margin: 0 auto; }
+
+        .calculator-container { max-width: 900px; margin: 0 auto; width: 100%; }
+        .calculator-card { background-color: var(--surface); border: 1px solid var(--border-color); border-radius: 1rem; padding: 2rem; margin-bottom: 1.5rem; }
+
+        .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .input-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .input-label { font-size: 0.9rem; font-weight: 500; color: var(--text-primary); display: flex; justify-content: space-between; align-items: center; }
+        .input-value { color: var(--accent-purple); font-weight: 600; }
+
+        .slider-container { position: relative; }
+        .slider-input { width: 100%; height: 8px; border-radius: 4px; background: var(--on-surface); outline: none; -webkit-appearance: none; appearance: none; }
+        .slider-input::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--accent-purple); cursor: pointer; transition: transform 0.2s; }
+        .slider-input::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        .slider-input::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: var(--accent-purple); cursor: pointer; border: none; transition: transform 0.2s; }
+        .slider-input::-moz-range-thumb:hover { transform: scale(1.2); }
+
+        .text-input { width: 100%; background-color: var(--on-surface); border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0.75rem 1rem; color: var(--text-primary); font-family: inherit; font-size: 1rem; outline: none; }
+        .text-input:focus { border-color: var(--accent-purple); }
+
+        .results-section { display: none; }
+        .results-section.show { display: block; }
+
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .metric-card { background: linear-gradient(135deg, var(--accent-purple) 0%, #8B5CF6 100%); border-radius: 0.75rem; padding: 1.5rem; text-align: center; }
+        .metric-card-label { font-size: 0.875rem; color: rgba(255,255,255,0.9); margin-bottom: 0.5rem; font-weight: 500; }
+        .metric-card-value { font-size: 2rem; font-weight: 700; color: white; }
+        .metric-card-sub { font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 0.25rem; }
+
+        .projection-card { background-color: var(--on-surface); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1rem; }
+        .projection-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .projection-title { font-size: 1.1rem; font-weight: 600; }
+        .projection-badge { background-color: var(--accent-purple); color: white; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 600; }
+        .projection-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
+        .projection-stat { }
+        .projection-stat-label { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.25rem; }
+        .projection-stat-value { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); }
+        .projection-growth { font-size: 0.875rem; color: #10B981; font-weight: 500; }
+
+        .cta-section { text-align: center; padding: 2rem; background: linear-gradient(135deg, var(--accent-purple) 0%, #8B5CF6 100%); border-radius: 1rem; margin-top: 2rem; }
+        .cta-section h3 { color: white; font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .cta-section p { color: rgba(255,255,255,0.9); margin-bottom: 1.5rem; }
+        .cta-button { background-color: white; color: var(--accent-purple); border: none; padding: 1rem 2rem; border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
+        .cta-button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+
+        @media (max-width: 768px) {
+            .input-grid { grid-template-columns: 1fr; }
+            .metrics-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -243,6 +298,7 @@
                 <div class="nav-tabs">
                     <button class="nav-tab active" data-tab="chatbot">Chatbot</button>
                     <button class="nav-tab" data-tab="seo-tool">SEO Tool</button>
+                    <button class="nav-tab" data-tab="traffic-tool">Traffic Calculator</button>
                 </div>
             </div>
             <div class="header-actions">
@@ -289,6 +345,95 @@
                     <button class="export-btn" id="export-btn">Export as CSV</button>
                 </div>
                 <div class="keywords-grid" id="keywords-grid"></div>
+            </div>
+        </div>
+
+        <!-- Traffic Calculator Section -->
+        <div id="traffic-tool-container">
+            <div class="traffic-header">
+                <h1>Website Traffic Value Calculator</h1>
+                <p>Discover the true value of your website traffic and see your revenue growth potential</p>
+            </div>
+
+            <div class="calculator-container">
+                <div class="calculator-card">
+                    <h2 style="margin-bottom: 1.5rem; font-size: 1.3rem;">Your Current Metrics</h2>
+
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label class="input-label">
+                                <span>Monthly Visitors</span>
+                                <span class="input-value" id="visitors-value">5,000</span>
+                            </label>
+                            <div class="slider-container">
+                                <input type="range" class="slider-input" id="visitors-slider"
+                                       min="100" max="100000" value="5000" step="100">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">
+                                <span>Conversion Rate</span>
+                                <span class="input-value" id="conversion-value">2.0%</span>
+                            </label>
+                            <div class="slider-container">
+                                <input type="range" class="slider-input" id="conversion-slider"
+                                       min="0.1" max="10" value="2" step="0.1">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">
+                                <span>Average Order Value</span>
+                                <span class="input-value" id="aov-value">$100</span>
+                            </label>
+                            <div class="slider-container">
+                                <input type="range" class="slider-input" id="aov-slider"
+                                       min="10" max="1000" value="100" step="10">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="calculate-btn" class="cta-button" style="width: 100%; background: var(--accent-purple); color: white;">
+                        Calculate My Traffic Value
+                    </button>
+                </div>
+
+                <div class="results-section" id="results-section">
+                    <div class="calculator-card">
+                        <h2 style="margin-bottom: 1.5rem; font-size: 1.3rem;">Your Current Performance</h2>
+
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-card-label">Monthly Revenue</div>
+                                <div class="metric-card-value" id="current-revenue">$0</div>
+                                <div class="metric-card-sub">From current traffic</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-card-label">Annual Revenue</div>
+                                <div class="metric-card-value" id="annual-revenue">$0</div>
+                                <div class="metric-card-sub">12-month projection</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-card-label">Cost Per Visitor</div>
+                                <div class="metric-card-value" id="cpv">$0</div>
+                                <div class="metric-card-sub">Value per visit</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="calculator-card">
+                        <h2 style="margin-bottom: 1.5rem; font-size: 1.3rem;">Growth Scenarios</h2>
+
+                        <div id="projections-container"></div>
+                    </div>
+
+                    <div class="cta-section">
+                        <h3>Ready to Unlock Your Growth Potential?</h3>
+                        <p>Let The Growth Engine help you achieve these numbers with proven AI & marketing strategies</p>
+                        <button class="cta-button" onclick="window.location.href='#contact'">Get Your Free Growth Strategy</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -462,35 +607,6 @@
 
             let currentKeywords = [];
 
-            // Tab switching
-            navTabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const tabName = tab.getAttribute('data-tab');
-
-                    // Update active tab
-                    navTabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-
-                    // Show/hide sections
-                    if (tabName === 'chatbot') {
-                        seoToolContainer.classList.remove('active');
-                        if (chatMessages.innerHTML.trim() === '') {
-                            welcomeScreen.style.display = 'flex';
-                            chatMessages.style.display = 'none';
-                        } else {
-                            welcomeScreen.style.display = 'none';
-                            chatMessages.style.display = 'flex';
-                        }
-                        document.querySelector('.input-area-wrapper').style.display = 'block';
-                    } else if (tabName === 'seo-tool') {
-                        welcomeScreen.style.display = 'none';
-                        chatMessages.style.display = 'none';
-                        document.querySelector('.input-area-wrapper').style.display = 'none';
-                        seoToolContainer.classList.add('active');
-                    }
-                });
-            });
-
             // Keyword generation logic
             const keywordTemplates = {
                 common: [
@@ -660,6 +776,169 @@
                 if (e.key === 'Enter' && !generateBtn.disabled) {
                     generateBtn.click();
                 }
+            });
+
+            // --- TRAFFIC CALCULATOR FUNCTIONALITY ---
+            const trafficToolContainer = document.getElementById('traffic-tool-container');
+            const visitorsSlider = document.getElementById('visitors-slider');
+            const conversionSlider = document.getElementById('conversion-slider');
+            const aovSlider = document.getElementById('aov-slider');
+
+            const visitorsValue = document.getElementById('visitors-value');
+            const conversionValue = document.getElementById('conversion-value');
+            const aovValue = document.getElementById('aov-value');
+
+            const calculateBtn = document.getElementById('calculate-btn');
+            const resultsSection = document.getElementById('results-section');
+
+            const currentRevenueEl = document.getElementById('current-revenue');
+            const annualRevenueEl = document.getElementById('annual-revenue');
+            const cpvEl = document.getElementById('cpv');
+            const projectionsContainer = document.getElementById('projections-container');
+
+            // Format number as currency
+            function formatCurrency(num) {
+                return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+            }
+
+            // Format number with commas
+            function formatNumber(num) {
+                return num.toLocaleString('en-US');
+            }
+
+            // Update slider value displays
+            visitorsSlider.addEventListener('input', (e) => {
+                visitorsValue.textContent = formatNumber(parseInt(e.target.value));
+            });
+
+            conversionSlider.addEventListener('input', (e) => {
+                conversionValue.textContent = parseFloat(e.target.value).toFixed(1) + '%';
+            });
+
+            aovSlider.addEventListener('input', (e) => {
+                aovValue.textContent = formatCurrency(parseInt(e.target.value));
+            });
+
+            // Calculate and display results
+            calculateBtn.addEventListener('click', () => {
+                const visitors = parseInt(visitorsSlider.value);
+                const conversionRate = parseFloat(conversionSlider.value) / 100;
+                const aov = parseInt(aovSlider.value);
+
+                // Calculate current metrics
+                const conversions = visitors * conversionRate;
+                const monthlyRevenue = conversions * aov;
+                const annualRevenue = monthlyRevenue * 12;
+                const costPerVisitor = monthlyRevenue / visitors;
+
+                // Display current metrics
+                currentRevenueEl.textContent = formatCurrency(monthlyRevenue);
+                annualRevenueEl.textContent = formatCurrency(annualRevenue);
+                cpvEl.textContent = formatCurrency(costPerVisitor);
+
+                // Calculate growth scenarios
+                const scenarios = [
+                    {
+                        title: '2x Traffic Growth',
+                        badge: 'DOUBLE',
+                        multiplier: 2,
+                        color: '#10B981'
+                    },
+                    {
+                        title: '3x Traffic Growth',
+                        badge: 'TRIPLE',
+                        multiplier: 3,
+                        color: '#F59E0B'
+                    },
+                    {
+                        title: '5x Traffic Growth',
+                        badge: '5X',
+                        multiplier: 5,
+                        color: '#8B5CF6'
+                    }
+                ];
+
+                // Generate projection cards
+                projectionsContainer.innerHTML = '';
+                scenarios.forEach(scenario => {
+                    const newVisitors = visitors * scenario.multiplier;
+                    const newConversions = newVisitors * conversionRate;
+                    const newMonthlyRevenue = newConversions * aov;
+                    const newAnnualRevenue = newMonthlyRevenue * 12;
+                    const revenueIncrease = newMonthlyRevenue - monthlyRevenue;
+                    const percentIncrease = ((scenario.multiplier - 1) * 100).toFixed(0);
+
+                    const card = document.createElement('div');
+                    card.className = 'projection-card';
+                    card.innerHTML = `
+                        <div class="projection-header">
+                            <div class="projection-title">${scenario.title}</div>
+                            <div class="projection-badge" style="background-color: ${scenario.color}">${scenario.badge}</div>
+                        </div>
+                        <div class="projection-stats">
+                            <div class="projection-stat">
+                                <div class="projection-stat-label">New Monthly Visitors</div>
+                                <div class="projection-stat-value">${formatNumber(newVisitors)}</div>
+                            </div>
+                            <div class="projection-stat">
+                                <div class="projection-stat-label">Monthly Revenue</div>
+                                <div class="projection-stat-value">${formatCurrency(newMonthlyRevenue)}</div>
+                                <div class="projection-growth">+${formatCurrency(revenueIncrease)} (+${percentIncrease}%)</div>
+                            </div>
+                            <div class="projection-stat">
+                                <div class="projection-stat-label">Annual Revenue</div>
+                                <div class="projection-stat-value">${formatCurrency(newAnnualRevenue)}</div>
+                                <div class="projection-growth">+${formatCurrency((newAnnualRevenue - annualRevenue))}</div>
+                            </div>
+                        </div>
+                    `;
+                    projectionsContainer.appendChild(card);
+                });
+
+                // Show results
+                resultsSection.classList.add('show');
+
+                // Scroll to results
+                setTimeout(() => {
+                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
+            });
+
+            // Update tab switching to include traffic tool
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.getAttribute('data-tab');
+
+                    // Update active tab
+                    navTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    // Show/hide sections
+                    if (tabName === 'chatbot') {
+                        seoToolContainer.classList.remove('active');
+                        trafficToolContainer.classList.remove('active');
+                        if (chatMessages.innerHTML.trim() === '') {
+                            welcomeScreen.style.display = 'flex';
+                            chatMessages.style.display = 'none';
+                        } else {
+                            welcomeScreen.style.display = 'none';
+                            chatMessages.style.display = 'flex';
+                        }
+                        document.querySelector('.input-area-wrapper').style.display = 'block';
+                    } else if (tabName === 'seo-tool') {
+                        welcomeScreen.style.display = 'none';
+                        chatMessages.style.display = 'none';
+                        trafficToolContainer.classList.remove('active');
+                        document.querySelector('.input-area-wrapper').style.display = 'none';
+                        seoToolContainer.classList.add('active');
+                    } else if (tabName === 'traffic-tool') {
+                        welcomeScreen.style.display = 'none';
+                        chatMessages.style.display = 'none';
+                        seoToolContainer.classList.remove('active');
+                        document.querySelector('.input-area-wrapper').style.display = 'none';
+                        trafficToolContainer.classList.add('active');
+                    }
+                });
             });
         });
     </script>
